@@ -44,11 +44,11 @@ simu_gui: compile
 compile: $(DEP) 
 
 $(WORK_DIR)/.%.compiled: $(TBDIR)/%.sv | $(WORK_DIR)/work
-	cd $(WORK_DIR) ; vlog  +acc $< 
+	cd $(WORK_DIR) ; vlog  +acc +define+SIMULATION $< 
 	touch $@
 
 $(WORK_DIR)/.%.compiled: $(SRCDIR)/%.sv | $(WORK_DIR)/work
-	cd $(WORK_DIR) ; vlog  +acc $< 
+	cd $(WORK_DIR) ; vlog  +acc +define+SIMULATION $< 
 	touch $@
 
 
