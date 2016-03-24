@@ -2,8 +2,8 @@
 #
 .PHONY: clean all simu_batch compile simu_gui info
 
-# WORK_DIR est le répertoire de simulation
-WORK_DIR = $(shell pwd)/work
+# WORKDIR est le répertoire de simulation
+WORKDIR = $(shell pwd)/work
 # TOPDIR est le répertoire principal (le dépot git de vos travaux)
 TOPDIR = $(shell pwd)/../..
 
@@ -16,12 +16,12 @@ TB_TOP = tb_fpga
 # Module sources
 SRCDIR    = $(TOPDIR)/fpga/src
 SRC       = $(wildcard $(SRCDIR)/*.sv)
-DEP      += $(patsubst $(SRCDIR)/%.sv,$(WORK_DIR)/.%.compiled,${SRC})
+DEP      += $(patsubst $(SRCDIR)/%.sv,$(WORKDIR)/.%.compiled,${SRC})
 
 # Module testbench sources
 TBDIR     = $(TOPDIR)/fpga/tb_src
 TBSRC     = $(wildcard $(TBDIR)/*.sv)
-DEP      += $(patsubst $(TBDIR)/%.sv,$(WORK_DIR)/.%.compiled,${TBSRC})
+DEP      += $(patsubst $(TBDIR)/%.sv,$(WORKDIR)/.%.compiled,${TBSRC})
 
 
 info: 
@@ -36,28 +36,28 @@ info:
 all: simu_batch
 
 simu_batch: compile
-	cd $(WORK_DIR) ; vsim  -batch -t 1ps -lib work $(TB_TOP) -do "run -all ; quit"
+	cd $(WORKDIR) ; vsim  -batch -t 1ps -lib work $(TB_TOP) -do "run -all ; quit"
 
 simu_gui: compile
-	cd $(WORK_DIR); vsim -t 1ps -lib work $(TB_TOP) 
+	cd $(WORKDIR); vsim -t 1ps -lib work $(TB_TOP) 
 
 compile: $(DEP) 
 
-$(WORK_DIR)/.%.compiled: $(TBDIR)/%.sv | $(WORK_DIR)/work
-	cd $(WORK_DIR) ; vlog  +acc +define+SIMULATION $< 
+$(WORKDIR)/.%.compiled: $(TBDIR)/%.sv | $(WORKDIR)/work
+	cd $(WORKDIR) ; vlog  +acc +define+SIMULATION $< 
 	touch $@
 
-$(WORK_DIR)/.%.compiled: $(SRCDIR)/%.sv | $(WORK_DIR)/work
-	cd $(WORK_DIR) ; vlog  +acc +define+SIMULATION $< 
+$(WORKDIR)/.%.compiled: $(SRCDIR)/%.sv | $(WORKDIR)/work
+	cd $(WORKDIR) ; vlog  +acc +define+SIMULATION $< 
 	touch $@
 
 
-$(WORK_DIR):
-	mkdir $(WORK_DIR) 
+$(WORKDIR):
+	mkdir $(WORKDIR) 
 
-$(WORK_DIR)/work: $(WORK_DIR)
-	cd $(WORK_DIR) ; vlib work
+$(WORKDIR)/work: $(WORKDIR)
+	cd $(WORKDIR) ; vlib work
 
 clean:
-	rm -rf $(WORK_DIR)
+	rm -rf $(WORKDIR)
 
