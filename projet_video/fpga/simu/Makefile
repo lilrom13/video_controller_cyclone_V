@@ -45,7 +45,7 @@ simu_gui: compile
 compile: $(TARGETS) 
 
 $(WORK_DIR)/.%.compiled: %.sv | $(WORK_DIR)
-	cd $(WORK_DIR) ; vlog  +acc -timescale "1ns/1ps" $< 
+	cd $(WORK_DIR) ; vlog  +acc +define+SIMULATION -timescale "1ns/1ps" $< 
 	touch $@
 
 $(WORK_DIR):
