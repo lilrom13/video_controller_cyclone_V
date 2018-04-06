@@ -73,7 +73,8 @@
     parameter tRRD             =     2.0; // tRRD   tCK   Active bank a to Active bank b command time (2 * tCK)
     parameter tWRa             =     7.0; // tWR    ns    Write recovery time (auto-precharge mode - must add 1 CLK)
     parameter tWRm             =    14.0; // tWR    ns    Write recovery time
-`else `define sg75                        //              Timing Parameters for -75 (CL = 3)
+`else
+   `define sg75                        //              Timing Parameters for -75 (CL = 3)
     parameter tCK              =     7.5; // tCK    ns    Nominal Clock Cycle Time
     parameter tCK3_min         =     7.5; // tCK    ns    Nominal Clock Cycle Time
     parameter tCK2_min         =    10.0; // tCK    ns    Nominal Clock Cycle Time
@@ -113,7 +114,8 @@
         parameter DQ_BITS          =       8; // Set this parameter to control how many Data bits are used
         parameter DM_BITS          =       1; // Set this parameter to control how many DM bits are used
         parameter BA_BITS          =       2; // Bank bits
-    `else `define x16
+    `else
+       `define x16
         parameter ADDR_BITS        =      12; // Set this parameter to control how many Address bits are used
         parameter ROW_BITS         =      12; // Set this parameter to control how many Row bits are used
         parameter COL_BITS         =       8; // Set this parameter to control how many Column bits are used
@@ -136,7 +138,8 @@
         parameter DQ_BITS          =       8; // Set this parameter to control how many Data bits are used
         parameter DM_BITS          =       1; // Set this parameter to control how many DM bits are used
         parameter BA_BITS          =       2; // Bank bits
-    `else `define x16
+    `else
+       `define x16
         parameter ADDR_BITS        =      12; // Set this parameter to control how many Address bits are used
         parameter ROW_BITS         =      12; // Set this parameter to control how many Row bits are used
         parameter COL_BITS         =       9; // Set this parameter to control how many Column bits are used
@@ -159,7 +162,8 @@
         parameter DQ_BITS          =       8; // Set this parameter to control how many Data bits are used
         parameter DM_BITS          =       1; // Set this parameter to control how many DM bits are used
         parameter BA_BITS          =       2; // Bank bits
-    `else `define x16
+    `else
+       `define x16
         parameter ADDR_BITS        =      13; // Set this parameter to control how many Address bits are used
         parameter ROW_BITS         =      13; // Set this parameter to control how many Row bits are used
         parameter COL_BITS         =       9; // Set this parameter to control how many Column bits are used
@@ -167,7 +171,8 @@
         parameter DM_BITS          =       2; // Set this parameter to control how many DM bits are used
         parameter BA_BITS          =       2; // Bank bits
     `endif
-`else `define den512Mb
+`else
+   `define den512Mb
     `ifdef x4
         parameter ADDR_BITS        =      13; // Set this parameter to control how many Address bits are used
         parameter ROW_BITS         =      13; // Set this parameter to control how many Row bits are used
@@ -182,7 +187,8 @@
         parameter DQ_BITS          =       8; // Set this parameter to control how many Data bits are used
         parameter DM_BITS          =       1; // Set this parameter to control how many DM bits are used
         parameter BA_BITS          =       2; // Bank bits
-    `else `define x16
+    `else
+       `define x16
         parameter ADDR_BITS        =      13; // Set this parameter to control how many Address bits are used
         parameter ROW_BITS         =      13; // Set this parameter to control how many Row bits are used
         parameter COL_BITS         =      10; // Set this parameter to control how many Column bits are used
