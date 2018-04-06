@@ -115,7 +115,7 @@ program test #(type virtual_master_t);
     $display("\n\n-Temps total pour les sequences en mode \wishbone classic\" : %d",t1-t0) ;
     //$display("-Temps total pour les sequences en mode \"registered feedback\"  : %d",t3-t2) ;
     //
-    repeat (5) @testbench_top.wshb_if_0.tbm.cbm;
+    repeat (5) @testbench_top.wshb_if_0.cbm;
     //
         //trErrors = wshb_m.printStatus();
     //$display("-----------------------Test Done------------------------");

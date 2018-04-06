@@ -33,9 +33,9 @@ module testbench_top;
   //
 
   // Wishbone 16 bits interface with a master testbench
-  wshb_if #(.DATA_BYTES(2), .TB_MASTER(1))  wshb_if_0(clk,reset);
+  wshb_if #(.DATA_BYTES(2))  wshb_if_0(clk,reset);
   // Virtual tb_master modport  for the testbench
-  typedef virtual wshb_if #(.DATA_BYTES(2), .TB_MASTER(1)).tb_master  virtual_master_t ;
+  typedef virtual wshb_if #(.DATA_BYTES(2)).tb_master  virtual_master_t ;
 
   // SDRAM interface 16 bits for DE1
   sdram_if #(.DATA_BYTES(2), .SADDR_WIDTH(13),.BA_WIDTH(2)) sdram_if_0() ; 
