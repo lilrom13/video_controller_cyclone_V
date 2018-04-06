@@ -37,10 +37,10 @@ info:
 all: simu_batch
 
 simu_batch: compile
-	cd $(WORK_DIR) ; vsim  -batch -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) -do "run -all ; quit"
+	cd $(WORK_DIR) ; vsim  -suppress 7033 -batch -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) -do "run -all ; quit"
 
 simu_gui: compile
-	cd $(WORK_DIR); vsim -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) 
+	cd $(WORK_DIR); vsim -suppress 7033 -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) 
 
 compile: $(TARGETS) 
 
