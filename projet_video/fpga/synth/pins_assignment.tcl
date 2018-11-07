@@ -37,4 +37,21 @@ set_instance_assignment -name CURRENT_STRENGTH_NEW "8MA" -to fpga_*
 
 ##### PLACEZ ICI VOTRE LISTE DE PINS PROPREMENT DITE
 
+set_location_assignment PIN_AF14 -to fpga_CLK
+set_location_assignment PIN_H15 -to fpga_CLK_AUX
+set_location_assignment PIN_F6 -to fpga_SEL_CLK_AUX
+set_location_assignment PIN_V16 -to fpga_LEDR0
+set_location_assignment PIN_w16 -to fpga_LEDR1
+set_location_assignment PIN_V17 -to fpga_LEDR2
+set_location_assignment PIN_V18 -to fpga_LEDR3
+set_location_assignment PIN_AB12 -to fpga_SW0
+set_location_assignment PIN_AC12 -to fpga_SW1
+set_location_assignment PIN_AA14 -to fpga_NRST
+
+set_instance_assignment -name SLEW_RATE 1 -to fpga_LEDR0
+set_instance_assignment -name SLEW_RATE 1 -to fpga_LEDR1
+set_instance_assignment -name SLEW_RATE 1 -to fpga_LEDR2
+set_instance_assignment -name SLEW_RATE 1 -to fpga_LEDR3
+set_instance_assignment -name SLEW_RATE 1 -to fpga_SEL_CLK_AUX
+
 
