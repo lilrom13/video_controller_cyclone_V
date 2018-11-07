@@ -1,21 +1,27 @@
 `default_nettype none
-module fpga(input  wire fpga_CLK,
-	      input wire   fpga_CLK_AUX,
-	      output logic fpga_LEDR0,
-	      output logic fpga_LEDR1,
-	      output logic fpga_LEDR2,
-	      output logic fpga_LEDR3,
-	      input wire   fpga_SW0,
-	      input wire   fpga_SW1,
-	      input wire   fpga_NRST,
-	      output logic fpga_SEL_CLK_AUX);
+module fpga(input wire 	 fpga_CLK,
+	    input wire 	 fpga_CLK_AUX,
+	    output logic fpga_LEDR0,
+	    output logic fpga_LEDR1,
+	    output logic fpga_LEDR2,
+	    output logic fpga_LEDR3,
+	    input wire 	 fpga_SW0,
+	    input wire 	 fpga_SW1,
+	    input wire 	 fpga_NRST,
+	    output logic fpga_SEL_CLK_AUX,
+	    vga_if.master vga_ifm
+	    );
 
 `ifdef SIMULATION
    localparam hcmpt=5;
+   localparam HDISP=90;
+   localparam VDISP=90;
 `else
    localparam hcmpt=25;
+   localparam HDISP=640;
+   localparam VDISP=480;
 `endif
-
+   
    logic [hcmpt-1:0] 	   cpt;
    logic [hcmpt:0] 	   cpt2;
 
@@ -28,6 +34,7 @@ module fpga(input  wire fpga_CLK,
 
    wire 		   nrst_50M;
    wire 		   nrst_27M;
+
    reset_sync reset_sync_50M (
 			      .clk(fpga_CLK),
 			      .nrst(fpga_NRST),
@@ -39,7 +46,12 @@ module fpga(input  wire fpga_CLK,
 			      .n_rst(nrst_27M)
 			      );
 
-
+   vga #(.VDISP(VDISP), .HDISP(HDISP)) vga_ (
+	     .clk(fpga_CLK_AUX),
+	     .nrst(fpga_NRST),
+	     .vga_ifm(vga_ifm)
+	     );
+   
    always @ (posedge fpga_CLK_AUX)
      if (!nrst_27M)
        cpt <= 0;
