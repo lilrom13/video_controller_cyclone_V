@@ -24,18 +24,18 @@ module vga(input wire clk,
    logic [$clog2(max_h_pixels)-1:0] h_cpt;
    logic [$clog2(max_v_pixels)-1:0] v_cpt;
    // tmp signals
-   logic [1:0] tmp_vga_hs;
-   logic [1:0] tmp_vga_h_blank;
-   logic [1:0] tmp_vga_vs;
-   logic [1:0] tmp_vga_v_blank;
-   logic [1:0] tmp_vga_blank;
-
+   logic tmp_vga_hs;
+   logic tmp_vga_h_blank;
+   logic tmp_vga_vs;
+   logic tmp_vga_v_blank;
+   logic tmp_vga_blank;
+   
    // assign signal combinatorially
-   assign tmp_vga_hs = (h_cpt > HDISP + HFP && h_cpt < HDISP + HFP + HBP) ? 0: 1;
-   assign tmp_vga_vs = (h_cpt > VDISP + VFP && v_cpt < VDISP + VFP + VBP) ? 0: 1;
-   assign tmp_vga_h_blank = (h_cpt) > HDISP ? 0: 1;
-   assign tmp_vga_v_blank = (v_cpt) > VDISP ? 0: 1;
-   assign tmp_vga_blank = tmp_vga_h_blank && tmp_vga_v_blank;
+   assign tmp_vga_hs = (h_cpt < HDISP + HFP) || (h_cpt >= HDISP + HFP + HPULSE);
+   assign tmp_vga_vs = (v_cpt < VDISP + VFP) || (v_cpt >= VDISP + VFP + VPULSE);
+   assign tmp_vga_h_blank = h_cpt < HDISP;
+   assign tmp_vga_v_blank = v_cpt < VDISP;
+   assign tmp_vga_blank = tmp_vga_h_blank & tmp_vga_v_blank;
       
    vga_pll	pll (
 		     .refclk(clk), 
@@ -73,48 +73,26 @@ module vga(input wire clk,
 	  end
      end
 
+   assign vga_ifm.VGA_CLK = !vga_clk;
+   assign vga_ifm.VGA_SYNC = 0;
+     
    always @ (posedge vga_clk)
      begin
-	vga_ifm.VGA_SYNC = 0;
-	vga_ifm.VGA_CLK = !vga_clk;
-	if (rst)
-	  begin
-	     vga_ifm.VGA_HS <= '0;
-	     vga_ifm.VGA_VS <= '0;
-	     vga_ifm.VGA_BLANK <= '0;
-	     vga_ifm.VGA_CLK <= 0;
-	  end
-	else
-	  begin
-	     vga_ifm.VGA_HS <= tmp_vga_hs;
-	     vga_ifm.VGA_VS <= tmp_vga_hs;
-	     vga_ifm.VGA_BLANK <= tmp_vga_blank;
-	  end
+	vga_ifm.VGA_HS <= tmp_vga_hs;
+	vga_ifm.VGA_VS <= tmp_vga_vs;
+	vga_ifm.VGA_BLANK <= tmp_vga_blank;
      end // always @ (posedge vga_clk)
 
-   // print white line every 16 pixels.
-   always @ (posedge vga_clk)
+   always_ff @ (posedge vga_clk)
      begin
-	if (rst)
+	vga_ifm.VGA_R <= 0;
+	vga_ifm.VGA_G <= 0;
+	vga_ifm.VGA_B <= 0;
+	if (h_cpt[3:0] == 0 || v_cpt[3:0] == 0)
 	  begin
-	     vga_ifm.VGA_R = '0;
-	     vga_ifm.VGA_G = '0;
-	     vga_ifm.VGA_B = '0;
-	  end
-	else
-	  begin
-	     if (h_cpt[3:0] == 0)
-	       begin
-		  vga_ifm.VGA_R = 8'b1;		  
-		  vga_ifm.VGA_G = 8'b1;
-		  vga_ifm.VGA_B = 8'b1;
-	       end
-	     else
-	       begin
-		  vga_ifm.VGA_R = 8'b0;
-		  vga_ifm.VGA_G = 8'b0;
-		  vga_ifm.VGA_B = 8'b0;
-	       end
+	     vga_ifm.VGA_R <= 255;		  
+	     vga_ifm.VGA_G <= 255;
+	     vga_ifm.VGA_B <= 255;
 	  end
      end
 endmodule

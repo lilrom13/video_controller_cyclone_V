@@ -2,9 +2,12 @@
 module reset_sync(input wire clk,
 		  input wire nrst,
 		  output logic n_rst);
+
+   parameter active_state = 0;
+   
    logic [1:0] bd;
 
-   assign n_rst = bd[1];
+   assign n_rst = active_state? !bd[1]: bd[1];
    
    always @ (posedge clk or negedge nrst)
      if (!nrst) bd <= 0;
@@ -14,4 +17,5 @@ module reset_sync(input wire clk,
 	  bd[1] <= bd[0];
 	  // bd <= {bd[0],1'b1};
        end
+   
 endmodule
