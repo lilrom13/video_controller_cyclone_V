@@ -13,10 +13,10 @@ TB_TOP = tb_fpga
 # Les répertoires contenant les sources sont toujours de la forme
 # <nom_du_module>/src ou <nom_du_macro_module>/src
 #
-DIRS = $(wildcard ${TOPDIR}/*/src ${TOPDIR}/*/tb_src)
+DIRS = $(wildcard ${TOPDIR}/*/src ${TOPDIR}/*/tb_src) ${TOPDIR}/../wshb_if
 
 # Les sources sont dans ces répertoires
-SOURCES = $(wildcard ${TOPDIR}/*/src/*.sv ${TOPDIR}/*/tb_src/*.sv)
+SOURCES = $(wildcard ${TOPDIR}/*/src/*.sv ${TOPDIR}/*/tb_src/*.sv) ${TOPDIR}/../wshb_if/wshb_if.sv
 
 # D'ou les cibles pour la compilation
 TARGETS = $(addprefix ${WORK_DIR}/.,$(notdir $(SOURCES:%.sv=.%.compiled)))
@@ -37,10 +37,10 @@ info:
 all: simu_batch
 
 simu_batch: compile
-	cd $(WORK_DIR) ; vsim  -batch -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) -do "run -all ; quit"
+	cd $(WORK_DIR) ; vsim  -suppress 7033 -batch -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) -do "run -all ; quit"
 
 simu_gui: compile
-	cd $(WORK_DIR); vsim -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) 
+	cd $(WORK_DIR); vsim -suppress 7033 -t 1ps -lib work -L altera_lnsim_ver $(TB_TOP) 
 
 compile: $(TARGETS) 
 
