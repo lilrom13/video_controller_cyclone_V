@@ -7,7 +7,6 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL"  -to vga_ifm.VGA*
 set_instance_assignment -name CURRENT_STRENGTH_NEW "8MA" -to vga_ifm.VGA*
 set_instance_assignment -name SLEW_RATE 1 -to  vga_ifm.VGA*
 
-
 # Position des pins
 set_location_assignment PIN_B13 -to vga_ifm.VGA_B[0]
 set_location_assignment PIN_G13 -to vga_ifm.VGA_B[1]

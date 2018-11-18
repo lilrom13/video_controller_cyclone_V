@@ -1,7 +1,8 @@
 `default_nettype none
 module vga(input wire clk,
 	   input wire nrst,
-	   vga_if.master vga_ifm);
+	   vga_if.master vga_ifm,
+	   wshb_if.master wshb_ifm);
    // dimension
    parameter	HDISP		= 640;
    parameter	VDISP		= 480;
@@ -83,16 +84,68 @@ module vga(input wire clk,
 	vga_ifm.VGA_BLANK <= tmp_vga_blank;
      end // always @ (posedge vga_clk)
 
-   always_ff @ (posedge vga_clk)
+   logic [15:0] response;
+   logic [$clog2(HDISP * VDISP)-1:0] cpt_pixels;
+   logic 			     full;
+   logic 			     empty;
+   logic [15:0]			     rdata;
+   logic   			     read;   
+   // La toute première lecture ne pourra pas avoir lieu tant que
+   // la FIFO n'aura pas été FULL au moins une fois.
+   bit 				     at_least_one;
+   
+   fifo_async #(.DEPTH_WIDTH(8)) fifo(
+		   .rst(rst),
+		   .rclk(vga_clk),
+		   .read(read), 
+		   .rdata(rdata),
+		   .rempty(empty),
+		   .wclk(wshb_ifm.clk),
+		   .wdata(response),
+		   .write(wshb_ifm.ack),
+		   .wfull(full)
+		   );
+   
+   assign at_least_one	= full | at_least_one;
+   assign read		= at_least_one && tmp_vga_blank;
+   assign response	= wshb_ifm.dat_sm;
+   assign wshb_ifm.cyc	= 1;
+   assign wshb_ifm.sel	= 2'b11;
+   assign wshb_ifm.stb	= !full;
+   assign wshb_ifm.we	= '0;
+   assign wshb_ifm.cti	= '0;
+   assign wshb_ifm.bte	= '0;
+
+   always_comb
+     begin	
+	vga_ifm.VGA_R = rdata[15:11]<<3;
+	vga_ifm.VGA_G = rdata[10:5]<<2;
+	vga_ifm.VGA_B = rdata[4:0]<<3;
+     end // always_ff @
+
+   // Lecture dans la SDRAM
+   always_ff @ (posedge wshb_ifm.clk)
      begin
-	vga_ifm.VGA_R <= 0;
-	vga_ifm.VGA_G <= 0;
-	vga_ifm.VGA_B <= 0;
-	if (h_cpt[3:0] == 0 || v_cpt[3:0] == 0)
+	if (rst)
 	  begin
-	     vga_ifm.VGA_R <= 255;		  
-	     vga_ifm.VGA_G <= 255;
-	     vga_ifm.VGA_B <= 255;
+	     wshb_ifm.adr <= '0;
+	     cpt_pixels <= '0;
+	  end
+	// Si on reçoit un signal ACK alors la donnée est accessible
+	if (wshb_ifm.ack == 1)
+	  begin
+	     $display("resonse = %h", response);
+	     // On fait avancer l'adresse pour lire le prochain pixel.
+	     wshb_ifm.adr <= wshb_ifm.adr + 'h2;
+	     cpt_pixels <= cpt_pixels + 1;
+	     
+	     // Nous avons lu tous les pixels de l'image. Retour a début.
+	     if (cpt_pixels == (HDISP * VDISP) -1)
+	       begin
+		  $display("1 frame has been read. Total pixel counted = %d", cpt_pixels + 1);
+		  wshb_ifm.adr <= '0;
+		  cpt_pixels <= '0;
+	       end
 	  end
      end
 endmodule
